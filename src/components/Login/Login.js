@@ -2,13 +2,13 @@ import React, { useContext } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
 import { Card, CardBody, Container } from 'reactstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const Login = () => {
-    const history = useHistory();
+    const navigate = useNavigate();
     const { login } = useContext(UserContext);
 
     const formik = useFormik({
@@ -25,16 +25,21 @@ const Login = () => {
         }),
         onSubmit: async (values) => {
             try {
-                const response = await axios.get(`http://localhost:4000/users?email=${values.email}&password=${values.password}`);
-                if (response.data.length > 0) {
-                    const user = response.data[0];
+                const response = await axios.post('https://agile-track-system-1.onrender.com/api/auth/login', {
+                    email: values.email,
+                    password: values.password
+                });
+
+                if (response.data.success) {
+                    const user = response.data.user;
                     login(user);
-                    history.push(user.role === 'admin' ? '/' : '/profiles');
+                    navigate(user.role === 'admin' ? '/' : '/profiles');
                 } else {
-                    alert('Invalid email or password');
+                    alert(response.data.message || 'Invalid email or password');
                 }
             } catch (error) {
                 console.error('Error logging in:', error);
+                alert('Failed to login. Please try again later.');
             }
         }
     });
@@ -74,7 +79,13 @@ const Login = () => {
                         </Container>
                     </form>
                     <p className="text-center mt-3">
-                        Don't have an account? <button className="btn btn-link" onClick={() => history.push('/signup')}>Sign Up</button>
+                        Don't have an account? 
+                        <button
+                            className="btn btn-link"
+                            onClick={() => navigate('/signup')}
+                        >
+                            Sign Up
+                        </button>
                     </p>
                 </CardBody>
             </Card>

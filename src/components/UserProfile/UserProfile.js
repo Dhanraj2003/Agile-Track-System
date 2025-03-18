@@ -17,7 +17,7 @@ const UserProfile = () => {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await axios.get('http://localhost:4000/users');
+                const response = await axios.get('https://agile-track-system-1.onrender.com/users');
                 if (user?.role === 'admin') {
                     setUsers(response.data.filter(user => user?.role !== 'admin'));
                 } else {
@@ -33,16 +33,15 @@ const UserProfile = () => {
 
     const fetchTasks = async (userId) => {
         try {
-            const response = await axios.get(`http://localhost:4000/tasks?assignedTo=${userId}`);
+            const response = await axios.get(`https://agile-track-system-1.onrender.com/tasks?assignedTo=${userId}`);
             setTasks(response.data);
         } catch (error) {
             console.error('Error fetching tasks:', error);
         }
     };
 
-
-    /*Sets the selected user when the "Get History" button is clicked.
-Fetches tasks related to the selected user. */
+    /* Sets the selected user when the "Get History" button is clicked.
+    Fetches tasks related to the selected user. */
     const handleGetHistory = (userId) => {
         setSelectedUser(users.find(user => user?.id === userId));
         fetchTasks(userId);
@@ -51,13 +50,13 @@ Fetches tasks related to the selected user. */
     const handleAddUser = async (event) => {
         event.preventDefault();
         try {
-            await axios.post('http://localhost:4000/users', {
+            await axios.post('https://agile-track-system-1.onrender.com/users', {
                 name: newUserName,
                 email: newUserEmail,
                 password: newUserPassword,
                 role: newUserRole,
             });
-            const updatedUsers = await axios.get('http://localhost:4000/users');
+            const updatedUsers = await axios.get('https://agile-track-system-1.onrender.com/users');
             setUsers(updatedUsers.data.filter(user => user?.role !== 'admin'));
             setShowForm(false);
             setNewUserName('');
